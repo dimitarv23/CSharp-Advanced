@@ -5,23 +5,30 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace P05.FilterByAge
 {
-    internal class Program
+    class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
+    class Program
     {
         static void Main(string[] args)
         {
             int n = int.Parse(Console.ReadLine());
-
-            Dictionary<string, int> pairs = new Dictionary<string, int>();
+            var people = new List<Person>();
 
             for (int i = 0; i < n; i++)
             {
                 string[] pair = Console.ReadLine()
                     .Split(", ");
 
-                if (!pairs.ContainsKey(pair[0]))
+                Person person = new Person()
                 {
-                    pairs.Add(pair[0], int.Parse(pair[1]));
-                }
+                    Name = pair[0],
+                    Age = int.Parse(pair[1])
+                };
+
+                people.Add(person);
             }
 
             string condition = Console.ReadLine();
@@ -29,28 +36,37 @@ namespace P05.FilterByAge
             string format = Console.ReadLine();
 
             //By default => condition is "older"
-            Func<int, bool> checkFunc = x => x >= age;
+            Func<Person, bool> filter = x => true;
+            Func<Person, string> outputFormat = x => $"{x.Name} {x.Age}";
 
             if (condition == "younger")
             {
-                checkFunc = x => x < age;
+                filter = x => x.Age < age;
+            }
+            else if (condition == "older")
+            {
+                filter = x => x.Age >= age;
             }
 
-            foreach (var pair in pairs
-                         .Where(x => checkFunc(x.Value)))
+            var filteredPeople = people.Where(filter);
+
+            if (format == "name age")
             {
-                if (format == "name")
-                {
-                    Console.WriteLine($"{pair.Key}");
-                }
-                else if (format == "age")
-                {
-                    Console.WriteLine($"{pair.Value}");
-                }
-                else if (format == "name age")
-                {
-                    Console.WriteLine($"{pair.Key} - {pair.Value}");
-                }
+                outputFormat = x => $"{x.Name} - {x.Age}";
+            }
+            else if (format == "age")
+            {
+                outputFormat = x => $"{x.Age}";
+            }
+            else if (format == "name")
+            {
+                outputFormat = x => $"{x.Name}";
+            }
+
+            var outputInformation = filteredPeople.Select(outputFormat);
+            foreach (var p in outputInformation)
+            {
+                Console.WriteLine(p);
             }
         }
     }
