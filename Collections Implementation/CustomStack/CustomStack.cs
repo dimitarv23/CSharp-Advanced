@@ -60,7 +60,7 @@ namespace CustomStack
         }
         public T Pop()
         {
-            if (this.items.Length == 0)
+            if (this.Count == 0)
             {
                 throw new InvalidOperationException("CustomStack is empty!");
             }
@@ -73,7 +73,7 @@ namespace CustomStack
         }
         public T Peek()
         {
-            if (this.items.Length == 0)
+            if (this.Count == 0)
             {
                 throw new InvalidOperationException("CustomStack is empty!");
             }
